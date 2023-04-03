@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
 
@@ -22,9 +21,12 @@ function Main(props) {
       <section className="photo-grid">
         {props.cards.map((card) => {
           return (
-            <article className="element" key={card._id}>
-              <Card card={card} onCardClick={props.onCardClick} onCardDelete={props.onCardDelete} onCardLike={props.onCardLike}/>
-            </article>
+            <Card
+              key={card._id}
+              card={card}
+              onCardClick={props.onCardClick}
+              onCardDelete={props.onCardDelete}
+              onCardLike={props.onCardLike} />
           );
         })}
       </section>

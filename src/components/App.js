@@ -30,6 +30,7 @@ function App() {
   const [userInfo, setUserInfo] = useState('');
   const [successfulRegistr, setSuccessfulRegistr] = useState(false);
   const [InfoTooltipPopup, setInfoToolTipPopup] = useState(false);
+  const isOpen = editAvatarPopupOpen || editProfilePopupOpen || addPlacePopupOpen || imagePopupOpen;
   const navigate = useNavigate();
 
 
@@ -63,12 +64,26 @@ function App() {
   function handleDeleteClick(_id) { //удаление карточек
     api.deleteCards(_id)
       .then(() => {
-        setCards(cards.filter((d) => d._id !== _id))
+        setCards((state) => state.filter((d) => d._id !== _id))
       })
       .catch((err) => {
         console.log(err);
       })
   }
+
+  function handleEscClose(e) {
+    if (e.key === 'Escape') {
+      closePopups();
+    }
+  }
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscClose);
+      return () => {
+        document.removeEventListener("keydown", handleEscClose);
+      };
+    }
+  }, [isOpen]);
 
   function closePopups() { // закрытие попапов
     setEditAvatarPopupOpen(false);
@@ -95,9 +110,9 @@ function App() {
 
   useEffect(() => { // проверка токена
     checkToken()
-  }, [checkToken])
+  }, [])
 
-  function cbLogin(inputValues) { // авторизация пользователя
+  function handleLoginSubmit(inputValues) { // авторизация пользователя
     auth.login(inputValues)
       .then((data) => {
         setUserInfo(inputValues.email)
@@ -109,7 +124,7 @@ function App() {
       })
   }
 
-  function cbRegistr(inputValues) { // регистрация пользователя
+  function handleRegistrSubmit(inputValues) { // регистрация пользователя
     auth.register(inputValues)
       .then((res) => {
         setSuccessfulRegistr(true);
@@ -139,7 +154,7 @@ function App() {
     }
   }
 
-  function cbSignOut() { // выход из профиля
+  function handleSignOut() { // выход из профиля
     setLoggedIn(false);
     setUserInfo('');
     localStorage.removeItem("jwt");
@@ -191,15 +206,14 @@ function App() {
       })
   }
 
-
   return (
     <div className="root">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header email={userInfo} loggedIn={loggedIn} onSignOut={cbSignOut} />
+        <Header email={userInfo} loggedIn={loggedIn} onSignOut={handleSignOut} />
         <Routes>
-          <Route path="/signin" element={<Login onLogin={cbLogin} />} />
-          <Route path="/signup" element={<Register onRegister={cbRegistr} />} />
-          <Route path="*" element={<Login onLogin={cbLogin} />} />
+          <Route path="/signin" element={<Login onLogin={handleLoginSubmit} />} />
+          <Route path="/signup" element={<Register onRegister={handleRegistrSubmit} />} />
+          <Route path="*" element={<Login onLogin={handleLoginSubmit} />} />
           <Route
             path="/"
             element={<ProtectedRoute element={Main}
