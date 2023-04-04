@@ -1,35 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
+import { useForm } from '../hooks/useForm';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function AddPlacePopup({ isOpen, onClose, onAddPlace, loadText }) {
-  const [place, setPlace] = useState('');
-  const [src, setSrc] = useState('');
+  const { values, handleChange, setValues } = useForm({ name: "", link: "" });
+  const currentUser = useContext(CurrentUserContext);
 
-  function handlePlaceChange(e) {
-    setPlace(e.target.value);
-  }
+  // const [place, setPlace] = useState('');
+  // const [src, setSrc] = useState('');
 
-  function handleSrcChange(e) {
-    setSrc(e.target.value);
-  }
+  //  Обработчик изменения инпута обновляет стейт
+  // function handlePlaceChange(e) {
+  //   setPlace(e.target.value);
+  // }
+
+  // function handleSrcChange(e) {
+  //   setSrc(e.target.value);
+  // }
 
   function handleSubmit(e) {
     // Запрещаем браузеру переходить по адресу формы
     e.preventDefault();
 
     // Передаём значения управляемых компонентов во внешний обработчик
-    onAddPlace({
-      name: place,
-      link: src,
-    });
+    onAddPlace(values);
   }
 
   useEffect(() => {
     if (isOpen) {
-      setPlace('');
-      setSrc('');
+      setValues({ name: "", link: "" });
     }
-  }, [isOpen])
+  }, [currentUser, isOpen])
 
   return (
     <PopupWithForm
@@ -44,9 +46,21 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, loadText }) {
       onSubmit={handleSubmit}
       loadText={loadText}
     >
-      <input value={place} onChange={handlePlaceChange} className="popup__input popup__input_field_place" type="text" name="place" id="place" placeholder="Название" minLength="2" maxLength="30" required />
+      <input value={values.name}
+        onChange={handleChange}
+        className="popup__input popup__input_field_place"
+        type="text"
+        name="name"
+        placeholder="Название"
+        minLength="2"
+        maxLength="30" required />
       <span className="popup__error place-error"></span>
-      <input value={src} onChange={handleSrcChange} className="popup__input popup__input_field_src" type="url" name="src" id="src" placeholder="Ссылка на картинку" required />
+      <input value={values.link}
+        onChange={handleChange}
+        className="popup__input popup__input_field_src"
+        type="url"
+        name="link"
+        placeholder="Ссылка на картинку" required />
       <span className="popup__error src-error"></span>
     </PopupWithForm>
   )
