@@ -7,18 +7,6 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, loadText }) {
   const { values, handleChange, setValues } = useForm({ name: "", link: "" });
   const currentUser = useContext(CurrentUserContext);
 
-  // const [place, setPlace] = useState('');
-  // const [src, setSrc] = useState('');
-
-  //  Обработчик изменения инпута обновляет стейт
-  // function handlePlaceChange(e) {
-  //   setPlace(e.target.value);
-  // }
-
-  // function handleSrcChange(e) {
-  //   setSrc(e.target.value);
-  // }
-
   function handleSubmit(e) {
     // Запрещаем браузеру переходить по адресу формы
     e.preventDefault();
